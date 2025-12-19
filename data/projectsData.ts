@@ -28,7 +28,6 @@ const projectsData: Project[] = [
     Features a responsive design, dark mode support, and CI/CD deployment via Vercel.
     Showcases professional expertise in AI, NLP, and Full-Stack development.`,
     imgSrc: '/static/images/telegram.jpg',
-    imgSrc: '/static/images/wepapp.jpg',
     href: 'https://github.com/ijazwahdat-ai/ijaz-wahdat-portfolio-',
   },
 ]
