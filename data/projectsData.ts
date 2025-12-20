@@ -19,7 +19,7 @@ const projectsData: Project[] = [
     description: `An end-to-end automation solution streamlining student registration and reporting.
     Integrated Google Forms, Sheets, and Apps Script with a Telegram Bot to automate workflows.
     Reduces manual administrative overhead and provides real-time notifications for educational institutions.`,
-    imgSrc: '/static/images/automation.jpg',
+    imgSrc: '/static/images/system.jpg',
     href: 'https://github.com/ijazwahdat-ai/academy-automation-system',
   },
   {
