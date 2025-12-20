@@ -12,6 +12,7 @@ const projectsData: Project[] = [
     Fine-tuned Llama-2-7B using QLoRA on a custom dataset of 1,750 telecom Q&A pairs.
     Achieved 89% factual accuracy in handling USSD codes, bundle inquiries, and ISP policies for AWCC, Salaam, and Roshan.`,
     imgSrc: '/static/images/telecom-ai.jpg',
+    imgSrc: '/static/images/web-app.jpg',
     href: 'https://github.com/ijazwahdat-ai/Afghan-Telecom-LLaMA-MCIT',
   },
   {
