@@ -1,9 +1,9 @@
 ---
 title: 'Adapting and Optimizing LLaMA-2-7B for Telecom Customer Support in Afghanistan using QLoRA'
 date: '2025-12-10'
-tags: ['Research', 'LLM', 'Telecom', 'QLoRA']
+tags: ['Research', 'LLM', 'Telecom', 'QLoRA', 'Fine-Tuning']
 draft: false
-summary: 'The abstract of my research paper submitted to KPU-IJET, detailing the creation of Afghanistan’s first telecom LLM.'
+summary: 'Submission to KPU-IJET: A technical case study on engineering Afghanistan’s first domain-specific telecom LLM using QLoRA and a custom dataset.'
 ---
 
 # Abstract
@@ -12,14 +12,64 @@ The adaptation of Large Language Models (LLMs) to specialized, low-resource doma
 
 We introduce the first publicly available, instruction-following dataset for this domain, comprising **1,750 manually validated English question-answer pairs**. Leveraging **Quantized Low-Rank Adaptation (QLoRA)**, we demonstrate a resource-efficient methodology for fine-tuning the **LLaMA-2-7B** model on a single, consumer-grade GPU.
 
-## Key Findings
+---
 
-*   **Data Scarcity Solved:** Created the AFTel-1750 dataset covering policies from **AWCC**, Salaam, and Roshan.
-*   **Performance:** The model achieved a high mean score of **89.0/100 for factual correctness** in a systematic human evaluation by 10 local telecom experts.
-*   **Efficiency:** Reduced VRAM usage from ~28GB to ~4GB using 4-bit quantization.
+## 1. The Challenge (Problem Statement)
 
-## Conclusion
+Generic LLMs like ChatGPT or base Llama-2 lack specific knowledge about Afghanistan's telecom ecosystem. They fail to answer localized queries such as:
+*   Specific USSD activation codes for AWCC or Roshan.
+*   Internet bundle pricing in Afghani (AFN).
+*   ATRA regulatory policies.
+
+Full fine-tuning of a 7B parameter model typically requires expensive enterprise GPUs (A100s), which was not feasible due to resource constraints.
+
+## 2. Methodology & Engineering
+
+### Data Pipeline
+We created the **AFTel-1750** dataset from scratch using a semi-automated pipeline:
+1.  **Generation:** Using GPT-4 with structured prompts to simulate customer queries.
+2.  **Validation:** Manual review by telecom experts to ensure accuracy of USSD codes and prices.
+3.  **Formatting:** Converting data into JSONL format compatible with Llama-2 instruction templates.
+
+### Fine-Tuning Strategy (QLoRA)
+To overcome hardware limitations, I employed **QLoRA** (Quantized Low-Rank Adaptation). This technique allowed us to fine-tune the model on a **single NVIDIA T4/L4 GPU** (available on Google Colab).
+
+*   **Base Model:** `NousResearch/Llama-2-7b-chat-hf`
+*   **Quantization:** 4-bit (NF4) via `bitsandbytes`
+*   **LoRA Rank (r):** 64
+*   **Optimizer:** AdamW
+
+---
+
+## 3. Results and Evaluation
+
+We evaluated the model using both automatic metrics and human expert review. The fine-tuned model significantly outperformed the base model.
+
+### Automatic Metrics (N=300)
+
+| Metric | Base LLaMA-2 (Zero-Shot) | Fine-tuned (QLoRA) | Improvement |
+| :--- | :--- | :--- | :--- |
+| **ROUGE-L** | 14.28 | **34.23** | +139% |
+| **BLEU** | 2.92 | **17.50** | +499% |
+| **BERTScore-F1** | 86.18 | **91.35** | +6% |
+
+### Human Evaluation
+Ten telecom experts from MCIT and local operators evaluated the model's responses on real-world queries:
+
+*   **Factual Correctness:** **89.0%**
+*   **Fluency:** **93.0%**
+*   **Relevance:** **89.0%**
+
+> "The model consistently retrieves and presents exact, domain-specific information, such as the correct USSD code (*789#) for balance checks." — *Expert Feedback*
+
+---
+
+## 4. Conclusion & Future Work
 
 This research provides a detailed, reproducible blueprint for applying state-of-the-art LLMs in environments with limited resources. It serves as a technical demonstration of fostering local AI capacity and digital sovereignty in Afghanistan.
 
-**[View Full Project Code on GitHub](https://github.com/ijazwahdat-ai/Afghan-Telecom-LLaMA-MCIT)**
+Future work will focus on expanding the dataset to include **Pashto and Dari** languages to serve a broader user base.
+
+### Resources
+*   **Paper Status:** Submitted to KPU-IJET Journal (2025)
+*   **Code & Dataset:** [View on GitHub](https://github.com/ijazwahdat-ai/Afghan-Telecom-LLaMA-MCIT)
