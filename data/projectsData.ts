@@ -11,8 +11,7 @@ const projectsData: Project[] = [
     description: `Afghanistan's first domain-specific LLM engineered for the Ministry of Communications and IT.
     Fine-tuned Llama-2-7B using QLoRA on a custom dataset of 1,750 telecom Q&A pairs.
     Achieved 89% factual accuracy in handling USSD codes, bundle inquiries, and ISP policies for AWCC, Salaam, and Roshan.`,
-    imgSrc: '/static/images/telecom-ai.jpg',
-    imgSrc: '/static/images/web-app.jpg',
+    imgSrc: '/static/images/chatbot.jpg',
     href: 'https://github.com/ijazwahdat-ai/Afghan-Telecom-LLaMA-MCIT',
   },
   {
