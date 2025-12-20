@@ -27,7 +27,7 @@ const projectsData: Project[] = [
     description: `A high-performance personal portfolio built with Next.js, TypeScript, and Tailwind CSS.
     Features a responsive design, dark mode support, and CI/CD deployment via Vercel.
     Showcases professional expertise in AI, NLP, and Full-Stack development.`,
-    imgSrc: '/static/images/telegram.jpg',
+    imgSrc: '/static/images/website.jpg',
     href: 'https://github.com/ijazwahdat-ai/ijaz-wahdat-portfolio-',
   },
 ]
