@@ -11,7 +11,8 @@ const Card = ({ title, description, imgSrc, href }) => (
       {imgSrc &&
         (href ? (
           <Link href={href} aria-label={`Link to ${title}`}>
-            <div className="relative w-full h-80 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+            {/* تغییر مهم: ارتفاع را به h-64 تغییر دادیم تا قاب افقی شود */}
+            <div className="relative w-full h-64 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
               <Image
                 alt={title}
                 src={imgSrc}
@@ -22,7 +23,7 @@ const Card = ({ title, description, imgSrc, href }) => (
             </div>
           </Link>
         ) : (
-          <div className="relative w-full h-80 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+          <div className="relative w-full h-64 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
             <Image
               alt={title}
               src={imgSrc}
