@@ -1,6 +1,6 @@
 ---
 title: 'Adapting and Optimizing LLaMA-2-7B for Telecom Customer Support in Afghanistan using QLoRA'
-date: '2025-9-28'
+date: '2025-09-28'
 tags: ['Research', 'LLM', 'Telecom', 'QLoRA', 'Fine-Tuning']
 draft: false
 summary: 'Submission to KPU-IJET: A technical case study on engineering Afghanistan’s first domain-specific telecom LLM using QLoRA and a custom dataset.'
@@ -17,7 +17,7 @@ We introduce the first publicly available, instruction-following dataset for thi
 ## 1. The Challenge (Problem Statement)
 
 Generic LLMs like ChatGPT or base Llama-2 lack specific knowledge about Afghanistan's telecom ecosystem. They fail to answer localized queries such as:
-*   Specific USSD activation codes for AWCC or Roshan.
+*   Specific USSD activation codes for Afghan Telecom Companies.
 *   Internet bundle pricing in Afghani (AFN).
 *   ATRA regulatory policies.
 
@@ -54,13 +54,13 @@ We evaluated the model using both automatic metrics and human expert review. The
 | **BERTScore-F1** | 86.18 | **91.35** | +6% |
 
 ### Human Evaluation
-Ten telecom experts from MCIT and local operators evaluated the model's responses on real-world queries:
+Ten telecom experts from MCIT evaluated the model's responses on real-world queries:
 
 *   **Factual Correctness:** **89.0%**
 *   **Fluency:** **93.0%**
 *   **Relevance:** **89.0%**
 
-> "The model consistently retrieves and presents exact, domain-specific information, such as the correct USSD code (*789#) for balance checks." — *Expert Feedback*
+> "The model consistently retrieves and presents exact, domain-specific information, such as the correct USSD code (*789#) for balance checks."
 
 ---
 
