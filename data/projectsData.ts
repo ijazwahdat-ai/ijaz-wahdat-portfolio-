@@ -23,6 +23,14 @@ const projectsData: Project[] = [
     href: 'https://github.com/ijazwahdat-ai/academy-automation-system',
   },
   {
+    title: 'Multi-intent Trilingual Chatbot (Rasa)',
+    description: `An intelligent conversational agent built with the Rasa framework, featuring trilingual support (Pashto, Dari, English).
+    Integrated with a live Weather API to provide real-time forecasts for all 34 provinces of Afghanistan.
+    Capable of handling diverse user intents ranging from Islamic guidance and Healthcare advice to AI concepts.`,
+    imgSrc: '/static/images/rasa-bot.jpg',
+    // لینک حذف شد چون در گیت‌هاب نیست
+  },
+  {
     title: 'Modern AI Engineer Portfolio',
     description: `A high-performance personal portfolio built with Next.js, TypeScript, and Tailwind CSS.
     Features a responsive design, dark mode support, and CI/CD deployment via Vercel.
