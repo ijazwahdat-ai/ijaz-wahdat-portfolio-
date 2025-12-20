@@ -27,7 +27,7 @@ const projectsData: Project[] = [
     description: `An intelligent conversational agent built with the Rasa framework, featuring trilingual support (Pashto, Dari, English).
     Integrated with a live Weather API to provide real-time forecasts for all 34 provinces of Afghanistan.
     Capable of handling diverse user intents ranging from Islamic guidance and Healthcare advice to AI concepts.`,
-    imgSrc: '/static/images/rasa-bot.jpg',
+    imgSrc: '/static/images/rasa-bot1.jpg',
     // لینک حذف شد چون در گیت‌هاب نیست
   },
   {
