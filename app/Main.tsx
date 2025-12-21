@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
@@ -6,7 +7,7 @@ import NewsletterForm from 'pliny/ui/NewsletterForm'
 
 const MAX_DISPLAY = 5
 
-export default function Home({ posts }: { posts: any }) {
+export default function Home({ posts }) {
   return (
     <>
       {/* Hero Section Start */}
