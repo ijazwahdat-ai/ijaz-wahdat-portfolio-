@@ -6,15 +6,15 @@ const siteMetadata = {
   description: 'Portfolio of an AI Agent Engineer specializing in Telecom LLMs, Intelligent Agents, and Enterprise Automation.',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://my-portfolio-two-jet-j.vercel.app', // لینک پورتفولیوی شما
+  siteUrl: 'https://my-portfolio-two-jet-j.vercel.app',
   siteRepo: 'https://github.com/ijazwahdat-ai',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
-  // لینک‌های اجتماعی شما
+
   email: 'ijazulhaqwahdat01@gmail.com',
   github: 'https://github.com/ijazwahdat-ai',
   linkedin: 'https://www.linkedin.com/in/ijaz-wahdat',
-  // بقیه را غیرفعال کردیم چون ندارید یا نیاز نیست
+
   mastodon: '',
   x: '',
   facebook: '',

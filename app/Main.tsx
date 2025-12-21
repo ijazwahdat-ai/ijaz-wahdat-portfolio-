@@ -16,10 +16,10 @@ export default function Home({ posts }) {
             Building Intelligent <span className="text-primary-500">AI Agents</span> for Afghanistan's Telecom Future
           </h1>
 
-          {/* متن حرفه‌ای درباره تخصص‌های شما */}
+
           <p className="text-lg leading-8 text-gray-500 dark:text-gray-400 mt-4">
             Hi, I'm <span className="font-bold text-gray-900 dark:text-gray-100">Ijazulhaq Wahdat</span>.
-            I am an AI Engineer with deep expertise in <span className="font-bold text-gray-900 dark:text-gray-100">Generative AI</span>, <span className="font-bold text-gray-900 dark:text-gray-100">Large Language Models (LLMs)</span>, and <span className="font-bold text-gray-900 dark:text-gray-100">Transformer Architectures</span>.
+            I am an AI Engineer with deep expertise in <span className="font-bold text-gray-900 dark:text-gray-100">Generative AI</span>, <span className="font-bold text-gray-900 dark:text-gray-100">Large Language Models (LLMs)</span>, and <span className="font-bold text-gray-900 dark:text-gray-100">Transformer Architectures </span>.
             <br className="hidden md:inline" />
             Specializing in <span className="font-bold text-gray-900 dark:text-gray-100">Natural Language Processing (NLP)</span> and <span className="font-bold text-gray-900 dark:text-gray-100">Enterprise Automation</span>, I apply rigorous engineering standards (AWS & DeepLearning.AI) to build scalable, intelligent solutions.
           </p>
