@@ -33,7 +33,7 @@ const siteMetadata = {
   newsletter: {
     provider: 'buttondown',
   },
-  comments: {
+   {
     provider: 'giscus',
     giscusConfig: {
       repo: process.env.NEXT_PUBLIC_GISCUS_REPO,
