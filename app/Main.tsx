@@ -16,14 +16,17 @@ export default function Home({ posts }) {
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
             Building Intelligent <span className="text-primary-500">AI Agents</span> for Afghanistan's Telecom Future
           </h1>
-          <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
+
+          {/* متن جدید و فوق‌العاده حرفه‌ای */}
+          <p className="text-lg leading-8 text-gray-500 dark:text-gray-400 mt-4">
             Hi, I'm <span className="font-bold text-gray-900 dark:text-gray-100">Ijazulhaq Wahdat</span>.
-            I am an AI Engineer specializing in <span className="font-bold">Large Language Models (LLMs)</span> and <span className="font-bold">Enterprise Automation</span>.
-            My mission is to modernize customer experience through intelligent automation and local AI solutions.
+            I am an AI Engineer with deep expertise in <span className="font-bold text-gray-900 dark:text-gray-100">Generative AI</span>, <span className="font-bold text-gray-900 dark:text-gray-100">Large Language Models (LLMs)</span>, and <span className="font-bold text-gray-900 dark:text-gray-100">Transformer Architectures</span>.
+            <br className="hidden md:inline" />
+            Specializing in <span className="font-bold text-gray-900 dark:text-gray-100">Natural Language Processing (NLP)</span> and <span className="font-bold text-gray-900 dark:text-gray-100">Enterprise Automation</span>, I apply rigorous engineering standards (AWS & DeepLearning.AI) to build scalable, intelligent solutions.
           </p>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-4">
+          <div className="flex flex-col sm:flex-row gap-4 mt-6">
             <Link
               href="/projects"
               className="inline-flex justify-center items-center px-6 py-3 text-base font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900 transition-colors"
