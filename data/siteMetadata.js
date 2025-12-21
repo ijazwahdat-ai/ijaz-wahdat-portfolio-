@@ -1,6 +1,6 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Ijazulhaq Wahdat | AI Engineer',
+  title: 'Ijazulhaq Oryad | AI Engineer',
   author: 'Ijazulhaq Wahdat',
   headerTitle: 'Ijazulhaq Wahdat',
   description: 'Portfolio of an AI Agent Engineer specializing in Telecom LLMs, Intelligent Agents, and Enterprise Automation.',
