@@ -10,11 +10,10 @@ const siteMetadata = {
   siteRepo: 'https://github.com/ijazwahdat-ai',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
-
   email: 'ijazulhaqwahdat01@gmail.com',
   github: 'https://github.com/ijazwahdat-ai',
   linkedin: 'https://www.linkedin.com/in/ijaz-wahdat',
-
+  // شبکه‌های اجتماعی غیرفعال
   mastodon: '',
   x: '',
   facebook: '',
@@ -33,8 +32,9 @@ const siteMetadata = {
   newsletter: {
     provider: 'buttondown',
   },
-   {
-    provider: 'giscus',
+  comments: {
+    // کامنت‌ها را غیرفعال کردیم
+    provider: '',
     giscusConfig: {
       repo: process.env.NEXT_PUBLIC_GISCUS_REPO,
       repositoryId: process.env.NEXT_PUBLIC_GISCUS_REPOSITORY_ID,
