@@ -17,7 +17,7 @@ export default function Home({ posts }) {
           </h1>
           <p className="text-lg leading-7 text-gray-500 dark:text-gray-400">
             Hi, I'm <span className="font-bold text-gray-900 dark:text-gray-100">Ijazulhaq Wahdat</span>.
-            I am an AI Engineer specializing in **Large Language Models (LLMs)** and **Enterprise Automation**.
+            I am an AI Engineer specializing in <span className="font-bold">Large Language Models (LLMs)</span> and <span className="font-bold">Enterprise Automation</span>.
             My mission is to modernize customer experience through intelligent automation and local AI solutions.
           </p>
 
@@ -104,7 +104,7 @@ export default function Home({ posts }) {
         </div>
       )}
 
-      {/* Newsletter Section (Optional - kept for design balance) */}
+      {/* Newsletter Section */}
       {siteMetadata.newsletter?.provider && (
         <div className="flex items-center justify-center pt-4">
           <NewsletterForm />
