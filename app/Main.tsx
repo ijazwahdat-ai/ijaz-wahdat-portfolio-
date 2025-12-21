@@ -3,7 +3,6 @@ import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { formatDate } from 'pliny/utils/formatDate'
-import NewsletterForm from 'pliny/ui/NewsletterForm'
 
 const MAX_DISPLAY = 5
 
@@ -17,7 +16,7 @@ export default function Home({ posts }) {
             Building Intelligent <span className="text-primary-500">AI Agents</span> for Afghanistan's Telecom Future
           </h1>
 
-          {/* متن جدید و فوق‌العاده حرفه‌ای */}
+          {/* متن حرفه‌ای درباره تخصص‌های شما */}
           <p className="text-lg leading-8 text-gray-500 dark:text-gray-400 mt-4">
             Hi, I'm <span className="font-bold text-gray-900 dark:text-gray-100">Ijazulhaq Wahdat</span>.
             I am an AI Engineer with deep expertise in <span className="font-bold text-gray-900 dark:text-gray-100">Generative AI</span>, <span className="font-bold text-gray-900 dark:text-gray-100">Large Language Models (LLMs)</span>, and <span className="font-bold text-gray-900 dark:text-gray-100">Transformer Architectures</span>.
@@ -42,7 +41,7 @@ export default function Home({ posts }) {
           </div>
         </div>
 
-        {/* Recent Research / Blog Section */}
+        {/* Recent Research Section */}
         <ul className="divide-y divide-gray-200 dark:divide-gray-700">
           {!posts.length && 'No posts found.'}
           {posts.slice(0, MAX_DISPLAY).map((post) => {
@@ -108,12 +107,7 @@ export default function Home({ posts }) {
         </div>
       )}
 
-      {/* Newsletter Section */}
-      {siteMetadata.newsletter?.provider && (
-        <div className="flex items-center justify-center pt-4">
-          <NewsletterForm />
-        </div>
-      )}
+      {/* Newsletter Section Removed */}
     </>
   )
 }
