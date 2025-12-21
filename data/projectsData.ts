@@ -28,7 +28,7 @@ const projectsData: Project[] = [
     Integrated with a live Weather API to provide real-time forecasts for all 34 provinces of Afghanistan.
     Capable of handling diverse user intents ranging from Islamic guidance and Healthcare advice to AI concepts.`,
     imgSrc: '/static/images/rasa-bot1.jpg',
-    // لینک حذف شد چون در گیت‌هاب نیست
+
   },
   {
     title: 'Modern AI Engineer Portfolio',
