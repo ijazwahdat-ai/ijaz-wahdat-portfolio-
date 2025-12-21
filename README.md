@@ -13,7 +13,7 @@ Hi, I'm **Ijazulhaq Wahdat**, an AI Engineer based in Kabul. I specialize in **L
 My primary focus is modernizing the telecommunications sector through intelligent automation. Recently, I led a significant R&D initiative at the **Ministry of Communications and IT (MCIT)**, engineering Afghanistan’s first domain-specific AI Agent capable of understanding complex telecom queries for AWCC, Salaam, and Roshan.
 
 -  I’m currently working on: **Fine-tuning Llama-3 for Dari & Pashto languages.**
--  My goal: **To revolutionize customer experience (CX) in Afghan Wireless (AWCC) using AI.**
+-  My goal: **To revolutionize customer experience (CX) in Afghan Telecom using AI.**
 
 ---
 
