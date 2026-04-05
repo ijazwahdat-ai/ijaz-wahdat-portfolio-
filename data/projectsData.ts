@@ -5,7 +5,7 @@ interface Project {
   imgSrc?: string
 }
 
-const projectsData: Project[] = [
+const projectsData: Project[] =[
   {
     title: 'Afghan Telecom LLaMA (MCIT)',
     description: `Afghanistan's first domain-specific LLM engineered for the Ministry of Communications and IT.
@@ -13,6 +13,20 @@ const projectsData: Project[] = [
     Achieved 89% factual accuracy in handling USSD codes, bundle inquiries, and ISP policies for AWCC, Salaam, MTN, Etisalat, Roshan, and MCIT.`,
     imgSrc: '/static/images/chatbot.jpg',
     href: 'https://github.com/ijazwahdat-ai/Afghan-Telecom-LLaMA-MCIT',
+  },
+  {
+    title: 'Shin Ghazi Baba PVC Smart Assistant',
+    description: `An intelligent, database-driven conversational AI embedded directly into the company's website.
+    It provides customers with accurate, real-time product information and dynamic pricing. Features full trilingual support (Dari, Pashto, and English) to maximize customer engagement.`,
+    imgSrc: '/static/images/pvc-bot-main.jpg',
+    href: '/blog/pvc-smart-assistant-demo', // این لینک کاربر را به صفحه ویدیو می‌برد
+  },
+  {
+    title: 'Shining Stars Academy AI Assistant',
+    description: `A custom-built, web-embedded conversational agent designed for Shining Stars Online Academy.
+    It instantly answers student and parent inquiries regarding course details, registration processes, and academy policies, ensuring 24/7 automated support.`,
+    imgSrc: '/static/images/academy-bot-main.jpg',
+    href: '/blog/academy-ai-assistant-demo', // این لینک کاربر را به صفحه ویدیو می‌برد
   },
   {
     title: 'Academy Automation System',
@@ -28,7 +42,6 @@ const projectsData: Project[] = [
     Integrated with a live Weather API to provide real-time forecasts for all 34 provinces of Afghanistan.
     Capable of handling diverse user intents ranging from Islamic guidance and Healthcare advice to AI concepts.`,
     imgSrc: '/static/images/rasa-bot1.jpg',
-
   },
   {
     title: 'Modern AI Engineer Portfolio',
