@@ -1,0 +1,473 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Core security primitives
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isVerifiedUser() && (
+        request.auth.token.email == 'ijazulhaqfazli2020@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isValidStringList(arr, maxItems) {
+      return arr is list && arr.size() <= maxItems && (arr.size() == 0 || arr[0] is string);
+    }
+
+    // Entity validators
+    function isValidLivePortfolio(data) {
+      return data.keys().hasAll([
+          'activePresetId', 'activePresetName', 'versionNumber', 'publishedAt',
+          'siteConfig', 'hero', 'about', 'sectionOrder', 'sectionVisibility',
+          'projects', 'skills', 'experiences', 'education', 'certifications',
+          'research', 'services', 'achievements', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'activePresetId', 'activePresetName', 'versionNumber', 'publishedAt',
+          'siteConfig', 'hero', 'about', 'sectionOrder', 'sectionVisibility',
+          'projects', 'skills', 'experiences', 'education', 'certifications',
+          'research', 'services', 'achievements', 'updatedAt'
+        ])
+        && isValidString(data.activePresetId, 1, 128)
+        && isValidString(data.activePresetName, 1, 160)
+        && data.versionNumber is number
+        && data.versionNumber >= 1
+        && isValidString(data.publishedAt, 1, 64)
+        && data.siteConfig is map
+        && data.hero is map
+        && data.about is map
+        && isValidStringList(data.sectionOrder, 20)
+        && data.sectionVisibility is map
+        && data.projects is list && data.projects.size() <= 50
+        && data.skills is list && data.skills.size() <= 30
+        && data.experiences is list && data.experiences.size() <= 40
+        && data.education is list && data.education.size() <= 20
+        && data.certifications is list && data.certifications.size() <= 50
+        && data.research is list && data.research.size() <= 50
+        && data.services is list && data.services.size() <= 30
+        && data.achievements is list && data.achievements.size() <= 40;
+    }
+
+    function isValidAdminUser(data, uid) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'createdAt'])
+        && data.keys().hasOnly(['uid', 'email', 'role', 'createdAt'])
+        && data.uid == uid
+        && isValidString(data.email, 3, 200)
+        && data.role == 'admin'
+        && data.createdAt is timestamp;
+    }
+
+    function isValidAdminVaultGate(data) {
+      return data.keys().hasAll(['codeHash', 'salt', 'updatedByUid', 'updatedAt'])
+        && data.keys().hasOnly(['codeHash', 'salt', 'updatedByUid', 'updatedAt'])
+        && isValidString(data.codeHash, 32, 256)
+        && isValidString(data.salt, 16, 128)
+        && data.updatedByUid == request.auth.uid
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidMasterProject(data) {
+      return data.keys().hasAll(['id', 'title', 'description', 'category', 'tags', 'featured', 'ownerUid', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'title', 'description', 'imgSrc', 'href', 'repoUrl', 'category', 'tags', 'featured', 'ownerUid', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidString(data.title, 1, 200)
+        && isValidString(data.description, 1, 4000)
+        && (!('imgSrc' in data) || isValidString(data.imgSrc, 0, 500))
+        && (!('href' in data) || isValidString(data.href, 0, 500))
+        && (!('repoUrl' in data) || isValidString(data.repoUrl, 0, 500))
+        && isValidString(data.category, 1, 100)
+        && isValidStringList(data.tags, 20)
+        && data.featured is bool
+        && data.ownerUid == request.auth.uid;
+    }
+
+    function isValidMasterExperience(data) {
+      return data.keys().hasAll(['id', 'role', 'organization', 'location', 'period', 'current', 'bullets', 'skillsUsed', 'ownerUid', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'role', 'organization', 'location', 'period', 'current', 'bullets', 'skillsUsed', 'ownerUid', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidString(data.role, 1, 200)
+        && isValidString(data.organization, 1, 200)
+        && isValidString(data.location, 0, 160)
+        && isValidString(data.period, 1, 100)
+        && data.current is bool
+        && isValidStringList(data.bullets, 20)
+        && isValidStringList(data.skillsUsed, 30)
+        && data.ownerUid == request.auth.uid;
+    }
+
+    function isValidMasterSkill(data) {
+      return data.keys().hasAll(['id', 'title', 'domain', 'summary', 'skills', 'ownerUid', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'title', 'domain', 'summary', 'skills', 'ownerUid', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidString(data.title, 1, 160)
+        && isValidString(data.domain, 0, 100)
+        && isValidString(data.summary, 0, 500)
+        && isValidStringList(data.skills, 40)
+        && data.ownerUid == request.auth.uid;
+    }
+
+    function isValidMasterEducation(data) {
+      return data.keys().hasAll(['id', 'degree', 'institution', 'year', 'thesis', 'focus', 'ownerUid', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'degree', 'institution', 'year', 'thesis', 'focus', 'ownerUid', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidString(data.degree, 1, 200)
+        && isValidString(data.institution, 1, 200)
+        && isValidString(data.year, 1, 64)
+        && isValidString(data.thesis, 0, 500)
+        && isValidString(data.focus, 0, 300)
+        && data.ownerUid == request.auth.uid;
+    }
+
+    function isValidMasterCertification(data) {
+      return data.keys().hasAll(['id', 'name', 'issuer', 'date', 'url', 'category', 'ownerUid', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'name', 'issuer', 'date', 'url', 'category', 'ownerUid', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidString(data.name, 1, 240)
+        && isValidString(data.issuer, 1, 200)
+        && isValidString(data.date, 0, 64)
+        && isValidString(data.url, 0, 500)
+        && isValidString(data.category, 0, 100)
+        && data.ownerUid == request.auth.uid;
+    }
+
+    function isValidMasterResearch(data) {
+      return data.keys().hasAll(['id', 'title', 'venue', 'date', 'summary', 'href', 'tags', 'ownerUid', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'title', 'venue', 'date', 'summary', 'href', 'tags', 'ownerUid', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidString(data.title, 1, 300)
+        && isValidString(data.venue, 0, 200)
+        && isValidString(data.date, 1, 64)
+        && isValidString(data.summary, 1, 2000)
+        && isValidString(data.href, 0, 500)
+        && isValidStringList(data.tags, 20)
+        && data.ownerUid == request.auth.uid;
+    }
+
+    function isValidMasterService(data) {
+      return data.keys().hasAll(['id', 'title', 'description', 'deliverables', 'ownerUid', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'title', 'description', 'deliverables', 'ownerUid', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidString(data.title, 1, 200)
+        && isValidString(data.description, 1, 1500)
+        && isValidStringList(data.deliverables, 20)
+        && data.ownerUid == request.auth.uid;
+    }
+
+    function isValidMasterAchievement(data) {
+      return data.keys().hasAll(['id', 'title', 'metric', 'context', 'year', 'ownerUid', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'title', 'metric', 'context', 'year', 'ownerUid', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidString(data.title, 1, 200)
+        && isValidString(data.metric, 0, 100)
+        && isValidString(data.context, 1, 600)
+        && isValidString(data.year, 0, 32)
+        && data.ownerUid == request.auth.uid;
+    }
+
+    function isValidProfilePreset(data) {
+      return data.keys().hasAll([
+          'id', 'name', 'targetRole', 'tagline', 'hero', 'about', 'siteConfig',
+          'sectionOrder', 'sectionVisibility', 'selectedProjectIds', 'selectedSkillIds',
+          'selectedExperienceIds', 'selectedEducationIds', 'selectedCertificationIds',
+          'selectedResearchIds', 'selectedServiceIds', 'selectedAchievementIds',
+          'ownerUid', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'name', 'targetRole', 'tagline', 'hero', 'about', 'siteConfig',
+          'sectionOrder', 'sectionVisibility', 'selectedProjectIds', 'selectedSkillIds',
+          'selectedExperienceIds', 'selectedEducationIds', 'selectedCertificationIds',
+          'selectedResearchIds', 'selectedServiceIds', 'selectedAchievementIds',
+          'ownerUid', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.id)
+        && isValidString(data.name, 1, 160)
+        && isValidString(data.targetRole, 1, 160)
+        && isValidString(data.tagline, 0, 300)
+        && data.hero is map
+        && data.about is map
+        && data.siteConfig is map
+        && isValidStringList(data.sectionOrder, 20)
+        && data.sectionVisibility is map
+        && isValidStringList(data.selectedProjectIds, 50)
+        && isValidStringList(data.selectedSkillIds, 30)
+        && isValidStringList(data.selectedExperienceIds, 40)
+        && isValidStringList(data.selectedEducationIds, 20)
+        && isValidStringList(data.selectedCertificationIds, 50)
+        && isValidStringList(data.selectedResearchIds, 50)
+        && isValidStringList(data.selectedServiceIds, 30)
+        && isValidStringList(data.selectedAchievementIds, 40)
+        && data.ownerUid == request.auth.uid;
+    }
+
+    function isValidPublishHistory(data) {
+      return data.keys().hasAll(['id', 'versionNumber', 'presetId', 'presetName', 'note', 'snapshot', 'publishedByUid', 'publishedAt'])
+        && data.keys().hasOnly(['id', 'versionNumber', 'presetId', 'presetName', 'note', 'snapshot', 'publishedByUid', 'publishedAt'])
+        && isValidId(data.id)
+        && data.versionNumber is number && data.versionNumber >= 1
+        && isValidString(data.presetId, 1, 128)
+        && isValidString(data.presetName, 1, 160)
+        && isValidString(data.note, 0, 400)
+        && data.snapshot is map
+        && data.publishedByUid == request.auth.uid
+        && data.publishedAt == request.time;
+    }
+
+    function isValidAppState(data) {
+      return data.keys().hasAll(['activePresetId', 'activePresetName', 'activeVersionNumber', 'activeHistoryId', 'updatedByUid', 'updatedAt'])
+        && data.keys().hasOnly(['activePresetId', 'activePresetName', 'activeVersionNumber', 'activeHistoryId', 'updatedByUid', 'updatedAt'])
+        && isValidString(data.activePresetId, 1, 128)
+        && isValidString(data.activePresetName, 1, 160)
+        && data.activeVersionNumber is number && data.activeVersionNumber >= 1
+        && isValidString(data.activeHistoryId, 1, 128)
+        && data.updatedByUid == request.auth.uid
+        && data.updatedAt == request.time;
+    }
+
+    // 1. Public Published Portfolio Snapshot
+    match /public_portfolio/{docId} {
+      allow get: if isValidId(docId) && docId == 'live';
+      allow list: if false;
+      allow create: if isAdmin() && isValidId(docId) && docId == 'live'
+        && isValidLivePortfolio(incoming())
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(docId) && docId == 'live'
+        && isValidLivePortfolio(incoming())
+        && incoming().updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // 2. Admin Registry
+    match /admins/{uid} {
+      allow get: if isSignedIn() && isValidId(uid) && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin() && resource.data.uid == request.auth.uid;
+      allow create: if isAdmin() && isValidId(uid) && isValidAdminUser(incoming(), uid) && incoming().createdAt == request.time;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // 3. Admin Passcode Vault (7-digit salted scrypt hash)
+    match /admin_vault/{docId} {
+      allow get: if isAdmin() && isValidId(docId) && docId == 'gate';
+      allow list: if false;
+      allow create: if isAdmin() && isValidId(docId) && docId == 'gate'
+        && isValidAdminVaultGate(incoming())
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(docId) && docId == 'gate'
+        && isValidAdminVaultGate(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['codeHash', 'salt', 'updatedByUid', 'updatedAt'])
+        && incoming().updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // 4. Master Projects
+    match /master_projects/{projectId} {
+      allow get: if isAdmin() && isValidId(projectId);
+      allow list: if isAdmin() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isAdmin() && isValidId(projectId)
+        && isValidMasterProject(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(projectId)
+        && isValidMasterProject(incoming())
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'imgSrc', 'href', 'repoUrl', 'category', 'tags', 'featured', 'updatedAt']);
+      allow delete: if isAdmin() && isValidId(projectId);
+    }
+
+    // 5. Master Experiences
+    match /master_experiences/{expId} {
+      allow get: if isAdmin() && isValidId(expId);
+      allow list: if isAdmin() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isAdmin() && isValidId(expId)
+        && isValidMasterExperience(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(expId)
+        && isValidMasterExperience(incoming())
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['role', 'organization', 'location', 'period', 'current', 'bullets', 'skillsUsed', 'updatedAt']);
+      allow delete: if isAdmin() && isValidId(expId);
+    }
+
+    // 6. Master Skills
+    match /master_skills/{skillId} {
+      allow get: if isAdmin() && isValidId(skillId);
+      allow list: if isAdmin() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isAdmin() && isValidId(skillId)
+        && isValidMasterSkill(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(skillId)
+        && isValidMasterSkill(incoming())
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'domain', 'summary', 'skills', 'updatedAt']);
+      allow delete: if isAdmin() && isValidId(skillId);
+    }
+
+    // 7. Master Education
+    match /master_education/{eduId} {
+      allow get: if isAdmin() && isValidId(eduId);
+      allow list: if isAdmin() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isAdmin() && isValidId(eduId)
+        && isValidMasterEducation(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(eduId)
+        && isValidMasterEducation(incoming())
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['degree', 'institution', 'year', 'thesis', 'focus', 'updatedAt']);
+      allow delete: if isAdmin() && isValidId(eduId);
+    }
+
+    // 8. Master Certifications
+    match /master_certifications/{certId} {
+      allow get: if isAdmin() && isValidId(certId);
+      allow list: if isAdmin() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isAdmin() && isValidId(certId)
+        && isValidMasterCertification(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(certId)
+        && isValidMasterCertification(incoming())
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'issuer', 'date', 'url', 'category', 'updatedAt']);
+      allow delete: if isAdmin() && isValidId(certId);
+    }
+
+    // 9. Master Research
+    match /master_research/{researchId} {
+      allow get: if isAdmin() && isValidId(researchId);
+      allow list: if isAdmin() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isAdmin() && isValidId(researchId)
+        && isValidMasterResearch(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(researchId)
+        && isValidMasterResearch(incoming())
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'venue', 'date', 'summary', 'href', 'tags', 'updatedAt']);
+      allow delete: if isAdmin() && isValidId(researchId);
+    }
+
+    // 10. Master Services
+    match /master_services/{serviceId} {
+      allow get: if isAdmin() && isValidId(serviceId);
+      allow list: if isAdmin() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isAdmin() && isValidId(serviceId)
+        && isValidMasterService(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(serviceId)
+        && isValidMasterService(incoming())
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'deliverables', 'updatedAt']);
+      allow delete: if isAdmin() && isValidId(serviceId);
+    }
+
+    // 11. Master Achievements
+    match /master_achievements/{achievementId} {
+      allow get: if isAdmin() && isValidId(achievementId);
+      allow list: if isAdmin() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isAdmin() && isValidId(achievementId)
+        && isValidMasterAchievement(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(achievementId)
+        && isValidMasterAchievement(incoming())
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'metric', 'context', 'year', 'updatedAt']);
+      allow delete: if isAdmin() && isValidId(achievementId);
+    }
+
+    // 12. Profile Presets (Draft & Configuration)
+    match /profile_presets/{presetId} {
+      allow get: if isAdmin() && isValidId(presetId);
+      allow list: if isAdmin() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isAdmin() && isValidId(presetId)
+        && isValidProfilePreset(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(presetId)
+        && isValidProfilePreset(incoming())
+        && incoming().ownerUid == existing().ownerUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'name', 'targetRole', 'tagline', 'hero', 'about', 'siteConfig',
+          'sectionOrder', 'sectionVisibility', 'selectedProjectIds', 'selectedSkillIds',
+          'selectedExperienceIds', 'selectedEducationIds', 'selectedCertificationIds',
+          'selectedResearchIds', 'selectedServiceIds', 'selectedAchievementIds',
+          'updatedAt'
+        ]);
+      allow delete: if isAdmin() && isValidId(presetId);
+    }
+
+    // 13. Publish & Activation History (Immutable snapshots)
+    match /publish_history/{versionId} {
+      allow get: if isAdmin() && isValidId(versionId);
+      allow list: if isAdmin() && resource.data.publishedByUid == request.auth.uid;
+      allow create: if isAdmin() && isValidId(versionId) && isValidPublishHistory(incoming());
+      allow update: if false;
+      allow delete: if isAdmin() && isValidId(versionId);
+    }
+
+    // 14. App State (Active Preset Pointer)
+    match /app_state/{docId} {
+      allow get: if isAdmin() && isValidId(docId) && docId == 'active_profile';
+      allow list: if false;
+      allow create: if isAdmin() && isValidId(docId) && docId == 'active_profile' && isValidAppState(incoming());
+      allow update: if isAdmin() && isValidId(docId) && docId == 'active_profile'
+        && isValidAppState(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'activePresetId', 'activePresetName', 'activeVersionNumber', 'activeHistoryId', 'updatedByUid', 'updatedAt'
+        ]);
+      allow delete: if false;
+    }
+  }
+}

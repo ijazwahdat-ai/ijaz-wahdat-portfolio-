@@ -5,6 +5,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import js from '@eslint/js'
 import { FlatCompat } from '@eslint/eslintrc'
+import firebaseRulesPlugin from '@firebase/eslint-plugin-security-rules'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -14,18 +15,20 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: [],
+    ignores: ['.next/**', 'node_modules/**', '.contentlayer/**'],
   },
-  js.configs.recommended,
-  ...compat.extends(
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:jsx-a11y/recommended',
-    'plugin:prettier/recommended',
-    'next',
-    'next/core-web-vitals'
-  ),
+  ...compat
+    .extends(
+      'plugin:@typescript-eslint/eslint-recommended',
+      'plugin:@typescript-eslint/recommended',
+      'plugin:jsx-a11y/recommended',
+      'plugin:prettier/recommended',
+      'next',
+      'next/core-web-vitals'
+    )
+    .map((cfg) => ({ ...cfg, files: ['**/*.{js,jsx,ts,tsx,mjs,cjs}'] })),
   {
+    files: ['**/*.{js,jsx,ts,tsx,mjs,cjs}'],
     plugins: {
       '@typescript-eslint': typescriptEslint,
     },
@@ -65,6 +68,20 @@ export default [
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-var-requires': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
+    },
+  },
+  {
+    files: ['**/*.rules'],
+    plugins: {
+      '@firebase/security-rules': firebaseRulesPlugin,
+    },
+    languageOptions: {
+      parser: firebaseRulesPlugin.parser,
+    },
+    rules: {
+      '@firebase/security-rules/no-open-reads': 'warn',
+      '@firebase/security-rules/no-open-writes': 'error',
+      '@firebase/security-rules/no-redundant-matches': 'error',
     },
   },
 ]

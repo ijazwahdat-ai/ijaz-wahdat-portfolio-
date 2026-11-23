@@ -1,112 +1,13 @@
-// @ts-nocheck
-import Link from '@/components/Link'
-import Tag from '@/components/Tag'
-import siteMetadata from '@/data/siteMetadata'
-import { formatDate } from 'pliny/utils/formatDate'
+import PortfolioSections, { BlogPostSummary } from '@/components/PortfolioSections'
+import { DEFAULT_LIVE_SNAPSHOT } from '@/lib/default-seed'
+import { LivePortfolioSnapshot } from '@/lib/portfolio-types'
 
-const MAX_DISPLAY = 5
+interface HomeProps {
+  posts: BlogPostSummary[]
+  livePortfolio?: LivePortfolioSnapshot
+}
 
-export default function Home({ posts }) {
-  return (
-    <>
-      {/* Hero Section Start */}
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
-        <div className="space-y-2 pb-8 pt-6 md:space-y-5">
-          <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl sm:leading-10 md:text-6xl md:leading-14">
-            Building Intelligent <span className="text-primary-500">AI Agents</span> for Afghanistan's Telecom Future
-          </h1>
-
-
-          <p className="text-lg leading-8 text-gray-500 dark:text-gray-400 mt-4">
-            Hi, I'm <span className="font-bold text-gray-900 dark:text-gray-100">Ijazulhaq Wahdat</span>.
-            I am an AI Engineer with deep expertise in <span className="font-bold text-gray-900 dark:text-gray-100">Generative AI</span>, <span className="font-bold text-gray-900 dark:text-gray-100">Large Language Models (LLMs)</span>, and <span className="font-bold text-gray-900 dark:text-gray-100">Transformer Architectures</span>.
-            <br className="hidden md:inline" /> Specializing in <span className="font-bold text-gray-900 dark:text-gray-100">Natural Language Processing (NLP)</span> and <span className="font-bold text-gray-900 dark:text-gray-100">Enterprise Automation</span>, I apply rigorous engineering standards (AWS & DeepLearning.AI) to build scalable, intelligent solutions.
-          </p>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 mt-6">
-            <Link
-              href="/projects"
-              className="inline-flex justify-center items-center px-6 py-3 text-base font-medium text-white bg-primary-600 rounded-lg hover:bg-primary-700 focus:ring-4 focus:ring-primary-300 dark:focus:ring-primary-900 transition-colors"
-            >
-              View My Projects
-            </Link>
-            <Link
-              href="/about"
-              className="inline-flex justify-center items-center px-6 py-3 text-base font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:text-white dark:border-gray-700 dark:hover:bg-gray-700 dark:bg-gray-800 transition-colors"
-            >
-              More About Me
-            </Link>
-          </div>
-        </div>
-
-        {/* Recent Research Section */}
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          {!posts.length && 'No posts found.'}
-          {posts.slice(0, MAX_DISPLAY).map((post) => {
-            const { slug, date, title, summary, tags } = post
-            return (
-              <li key={slug} className="py-12">
-                <article>
-                  <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
-                    <dl>
-                      <dt className="sr-only">Published on</dt>
-                      <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                        <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
-                      </dd>
-                    </dl>
-                    <div className="space-y-5 xl:col-span-3">
-                      <div className="space-y-6">
-                        <div>
-                          <h2 className="text-2xl font-bold leading-8 tracking-tight">
-                            <Link
-                              href={`/blog/${slug}`}
-                              className="text-gray-900 dark:text-gray-100"
-                            >
-                              {title}
-                            </Link>
-                          </h2>
-                          <div className="flex flex-wrap">
-                            {tags.map((tag) => (
-                              <Tag key={tag} text={tag} />
-                            ))}
-                          </div>
-                        </div>
-                        <div className="prose max-w-none text-gray-500 dark:text-gray-400">
-                          {summary}
-                        </div>
-                      </div>
-                      <div className="text-base font-medium leading-6">
-                        <Link
-                          href={`/blog/${slug}`}
-                          className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-                          aria-label={`Read "${title}"`}
-                        >
-                          Read Research Paper &rarr;
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-
-      {posts.length > MAX_DISPLAY && (
-        <div className="flex justify-end text-base font-medium leading-6">
-          <Link
-            href="/blog"
-            className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-            aria-label="All posts"
-          >
-            All Research &rarr;
-          </Link>
-        </div>
-      )}
-
-      {/* Newsletter Section Removed */}
-    </>
-  )
+export default function Home({ posts, livePortfolio }: HomeProps) {
+  const snapshot = livePortfolio || DEFAULT_LIVE_SNAPSHOT
+  return <PortfolioSections snapshot={snapshot} blogPosts={posts} />
 }

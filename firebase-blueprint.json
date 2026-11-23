@@ -1,0 +1,308 @@
+{
+  "entities": {
+    "LivePortfolio": {
+      "title": "LivePortfolio",
+      "description": "The single globally active published portfolio snapshot rendered at the public root URL.",
+      "type": "object",
+      "properties": {
+        "activePresetId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "activePresetName": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "versionNumber": { "type": "number" },
+        "publishedAt": { "type": "string", "maxLength": 64 },
+        "siteConfig": { "type": "object" },
+        "hero": { "type": "object" },
+        "about": { "type": "object" },
+        "sectionOrder": { "type": "array" },
+        "sectionVisibility": { "type": "object" },
+        "projects": { "type": "array" },
+        "skills": { "type": "array" },
+        "experiences": { "type": "array" },
+        "education": { "type": "array" },
+        "certifications": { "type": "array" },
+        "research": { "type": "array" },
+        "services": { "type": "array" },
+        "achievements": { "type": "array" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["activePresetId", "activePresetName", "versionNumber", "publishedAt", "hero", "about", "sectionOrder", "sectionVisibility", "updatedAt"]
+    },
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Authorized administrator registry.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "format": "email", "maxLength": 200 },
+        "role": { "type": "string", "enum": ["admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role", "createdAt"]
+    },
+    "AdminVaultGate": {
+      "title": "AdminVaultGate",
+      "description": "Salted scrypt hash for the 7-digit secret studio access code.",
+      "type": "object",
+      "properties": {
+        "codeHash": { "type": "string", "minLength": 32, "maxLength": 256 },
+        "salt": { "type": "string", "minLength": 16, "maxLength": 128 },
+        "updatedByUid": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["codeHash", "salt", "updatedByUid", "updatedAt"]
+    },
+    "MasterProject": {
+      "title": "MasterProject",
+      "description": "Permanent master project record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 128 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 4000 },
+        "imgSrc": { "type": "string", "maxLength": 500 },
+        "href": { "type": "string", "maxLength": 500 },
+        "repoUrl": { "type": "string", "maxLength": 500 },
+        "category": { "type": "string", "maxLength": 100 },
+        "tags": { "type": "array" },
+        "featured": { "type": "boolean" },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "description", "category", "ownerUid", "createdAt", "updatedAt"]
+    },
+    "MasterExperience": {
+      "title": "MasterExperience",
+      "description": "Permanent work experience record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 128 },
+        "role": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "organization": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "location": { "type": "string", "maxLength": 160 },
+        "period": { "type": "string", "maxLength": 100 },
+        "current": { "type": "boolean" },
+        "bullets": { "type": "array" },
+        "skillsUsed": { "type": "array" },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "role", "organization", "period", "ownerUid", "createdAt", "updatedAt"]
+    },
+    "MasterSkillCategory": {
+      "title": "MasterSkillCategory",
+      "description": "Permanent technical skill category record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 128 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "domain": { "type": "string", "maxLength": 100 },
+        "summary": { "type": "string", "maxLength": 500 },
+        "skills": { "type": "array" },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "skills", "ownerUid", "createdAt", "updatedAt"]
+    },
+    "MasterEducation": {
+      "title": "MasterEducation",
+      "description": "Permanent education record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 128 },
+        "degree": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "institution": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "year": { "type": "string", "maxLength": 64 },
+        "thesis": { "type": "string", "maxLength": 500 },
+        "focus": { "type": "string", "maxLength": 300 },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "degree", "institution", "year", "ownerUid", "createdAt", "updatedAt"]
+    },
+    "MasterCertification": {
+      "title": "MasterCertification",
+      "description": "Permanent certification record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 128 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "issuer": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "date": { "type": "string", "maxLength": 64 },
+        "url": { "type": "string", "maxLength": 500 },
+        "category": { "type": "string", "maxLength": 100 },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "issuer", "ownerUid", "createdAt", "updatedAt"]
+    },
+    "MasterResearch": {
+      "title": "MasterResearch",
+      "description": "Permanent research publication or technical case study record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 128 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "venue": { "type": "string", "maxLength": 200 },
+        "date": { "type": "string", "maxLength": 64 },
+        "summary": { "type": "string", "maxLength": 2000 },
+        "href": { "type": "string", "maxLength": 500 },
+        "tags": { "type": "array" },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "date", "summary", "ownerUid", "createdAt", "updatedAt"]
+    },
+    "MasterService": {
+      "title": "MasterService",
+      "description": "Permanent consulting or engineering service offering.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 128 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 1500 },
+        "deliverables": { "type": "array" },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "description", "ownerUid", "createdAt", "updatedAt"]
+    },
+    "MasterAchievement": {
+      "title": "MasterAchievement",
+      "description": "Permanent verifiable career milestone or achievement.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 128 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "metric": { "type": "string", "maxLength": 100 },
+        "context": { "type": "string", "maxLength": 600 },
+        "year": { "type": "string", "maxLength": 32 },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "context", "ownerUid", "createdAt", "updatedAt"]
+    },
+    "ProfilePreset": {
+      "title": "ProfilePreset",
+      "description": "Job-targeted portfolio preset referencing master records without duplicating them.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 128 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "targetRole": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "tagline": { "type": "string", "maxLength": 300 },
+        "hero": { "type": "object" },
+        "about": { "type": "object" },
+        "siteConfig": { "type": "object" },
+        "sectionOrder": { "type": "array" },
+        "sectionVisibility": { "type": "object" },
+        "selectedProjectIds": { "type": "array" },
+        "selectedSkillIds": { "type": "array" },
+        "selectedExperienceIds": { "type": "array" },
+        "selectedEducationIds": { "type": "array" },
+        "selectedCertificationIds": { "type": "array" },
+        "selectedResearchIds": { "type": "array" },
+        "selectedServiceIds": { "type": "array" },
+        "selectedAchievementIds": { "type": "array" },
+        "ownerUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "targetRole", "hero", "about", "sectionOrder", "sectionVisibility", "ownerUid", "createdAt", "updatedAt"]
+    },
+    "PublishHistory": {
+      "title": "PublishHistory",
+      "description": "Immutable snapshot and activation log for rollback and auditability.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-zA-Z0-9_\\-]+$", "maxLength": 128 },
+        "versionNumber": { "type": "number" },
+        "presetId": { "type": "string", "maxLength": 128 },
+        "presetName": { "type": "string", "maxLength": 160 },
+        "note": { "type": "string", "maxLength": 400 },
+        "snapshot": { "type": "object" },
+        "publishedByUid": { "type": "string", "maxLength": 128 },
+        "publishedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "versionNumber", "presetId", "presetName", "snapshot", "publishedByUid", "publishedAt"]
+    },
+    "AppState": {
+      "title": "AppState",
+      "description": "Global active profile pointer.",
+      "type": "object",
+      "properties": {
+        "activePresetId": { "type": "string", "maxLength": 128 },
+        "activePresetName": { "type": "string", "maxLength": 160 },
+        "activeVersionNumber": { "type": "number" },
+        "activeHistoryId": { "type": "string", "maxLength": 128 },
+        "updatedByUid": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["activePresetId", "activePresetName", "activeVersionNumber", "updatedByUid", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/public_portfolio/{docId}": {
+      "schema": { "$ref": "#/entities/LivePortfolio" },
+      "description": "Published live portfolio snapshot (docId='live'). Public read via get only; admin write only."
+    },
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Admin user directory."
+    },
+    "/admin_vault/{docId}": {
+      "schema": { "$ref": "#/entities/AdminVaultGate" },
+      "description": "Salted scrypt hash for the 7-digit studio passcode. Strictly admin-only."
+    },
+    "/master_projects/{projectId}": {
+      "schema": { "$ref": "#/entities/MasterProject" },
+      "description": "Permanent master projects repository. Admin-only."
+    },
+    "/master_experiences/{expId}": {
+      "schema": { "$ref": "#/entities/MasterExperience" },
+      "description": "Permanent master work experience repository. Admin-only."
+    },
+    "/master_skills/{skillId}": {
+      "schema": { "$ref": "#/entities/MasterSkillCategory" },
+      "description": "Permanent master skill categories repository. Admin-only."
+    },
+    "/master_education/{eduId}": {
+      "schema": { "$ref": "#/entities/MasterEducation" },
+      "description": "Permanent master education repository. Admin-only."
+    },
+    "/master_certifications/{certId}": {
+      "schema": { "$ref": "#/entities/MasterCertification" },
+      "description": "Permanent master certifications repository. Admin-only."
+    },
+    "/master_research/{researchId}": {
+      "schema": { "$ref": "#/entities/MasterResearch" },
+      "description": "Permanent master research publications repository. Admin-only."
+    },
+    "/master_services/{serviceId}": {
+      "schema": { "$ref": "#/entities/MasterService" },
+      "description": "Permanent master services repository. Admin-only."
+    },
+    "/master_achievements/{achievementId}": {
+      "schema": { "$ref": "#/entities/MasterAchievement" },
+      "description": "Permanent master achievements repository. Admin-only."
+    },
+    "/profile_presets/{presetId}": {
+      "schema": { "$ref": "#/entities/ProfilePreset" },
+      "description": "Saved profile presets and draft configurations. Strictly admin-only."
+    },
+    "/publish_history/{versionId}": {
+      "schema": { "$ref": "#/entities/PublishHistory" },
+      "description": "Immutable version history and rollback snapshots. Strictly admin-only."
+    },
+    "/app_state/{docId}": {
+      "schema": { "$ref": "#/entities/AppState" },
+      "description": "Global active configuration pointer. Strictly admin-only."
+    }
+  }
+}

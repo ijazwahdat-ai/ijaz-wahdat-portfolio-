@@ -7,13 +7,13 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 // You might need to insert additional domains in script-src if you are using external services
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app analytics.umami.is;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app analytics.umami.is https://apis.google.com https://accounts.google.com;
   style-src 'self' 'unsafe-inline';
   img-src * blob: data:;
   media-src *.s3.amazonaws.com;
   connect-src *;
   font-src 'self';
-  frame-src giscus.app
+  frame-src giscus.app https://*.firebaseapp.com https://accounts.google.com
 `
 
 const securityHeaders = [
@@ -26,11 +26,6 @@ const securityHeaders = [
   {
     key: 'Referrer-Policy',
     value: 'strict-origin-when-cross-origin',
-  },
-  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-  {
-    key: 'X-Frame-Options',
-    value: 'DENY',
   },
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
   {
@@ -54,7 +49,7 @@ const securityHeaders = [
   },
 ]
 
-const output = process.env.EXPORT ? 'export' : undefined
+const output = process.env.EXPORT ? 'export' : 'standalone'
 const basePath = process.env.BASE_PATH || undefined
 const unoptimized = process.env.UNOPTIMIZED ? true : undefined
 

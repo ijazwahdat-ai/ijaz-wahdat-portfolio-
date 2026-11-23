@@ -14,7 +14,7 @@ const Card = ({ title, description, imgSrc, href }) => (
             <Image
               alt={title}
               src={imgSrc}
-              className="object-cover object-center w-full h-auto"
+              className="h-auto w-full object-cover object-center"
               width={1088}
               height={612}
             />
@@ -23,7 +23,7 @@ const Card = ({ title, description, imgSrc, href }) => (
           <Image
             alt={title}
             src={imgSrc}
-            className="object-cover object-center w-full h-auto"
+            className="h-auto w-full object-cover object-center"
             width={1088}
             height={612}
           />

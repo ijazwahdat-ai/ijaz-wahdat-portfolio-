@@ -3,44 +3,44 @@
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
 import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
 import { Fragment, useState, useEffect, useRef } from 'react'
+import { Menu, X } from 'lucide-react'
 import Link from './Link'
-import headerNavLinks from '@/data/headerNavLinks'
+import defaultNavLinks from '@/data/headerNavLinks'
+import { NavLinkItem } from '@/lib/portfolio-types'
 
-const MobileNav = () => {
+interface MobileNavProps {
+  navLinks?: NavLinkItem[]
+}
+
+const MobileNav = ({ navLinks }: MobileNavProps) => {
   const [navShow, setNavShow] = useState(false)
-  const navRef = useRef(null)
+  const navRef = useRef<HTMLDivElement | null>(null)
+
+  const linksToRender = (navLinks || defaultNavLinks.map((l) => ({ ...l, visible: true }))).filter(
+    (l) => l.visible !== false
+  )
 
   const onToggleNav = () => {
     setNavShow((status) => {
-      if (status) {
-        enableBodyScroll(navRef.current)
-      } else {
-        // Prevent scrolling
-        disableBodyScroll(navRef.current)
+      if (navRef.current) {
+        if (status) {
+          enableBodyScroll(navRef.current)
+        } else {
+          disableBodyScroll(navRef.current)
+        }
       }
       return !status
     })
   }
 
   useEffect(() => {
-    return clearAllBodyScrollLocks
-  })
+    return () => clearAllBodyScrollLocks()
+  }, [])
 
   return (
     <>
       <button aria-label="Toggle Menu" onClick={onToggleNav} className="sm:hidden">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          className="hover:text-primary-500 dark:hover:text-primary-400 h-8 w-8 text-gray-900 dark:text-gray-100"
-        >
-          <path
-            fillRule="evenodd"
-            d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-            clipRule="evenodd"
-          />
-        </svg>
+        <Menu className="hover:text-primary-500 dark:hover:text-primary-400 h-7 w-7 text-gray-900 dark:text-gray-100" />
       </button>
       <Transition appear show={navShow} as={Fragment} unmount={false}>
         <Dialog as="div" onClose={onToggleNav} unmount={false}>
@@ -72,9 +72,9 @@ const MobileNav = () => {
                 ref={navRef}
                 className="mt-8 flex h-full basis-0 flex-col items-start overflow-y-auto pt-2 pl-12 text-left"
               >
-                {headerNavLinks.map((link) => (
+                {linksToRender.map((link) => (
                   <Link
-                    key={link.title}
+                    key={`${link.title}-${link.href}`}
                     href={link.href}
                     className="hover:text-primary-500 dark:hover:text-primary-400 mb-4 py-2 pr-4 text-2xl font-bold tracking-widest text-gray-900 outline outline-0 dark:text-gray-100"
                     onClick={onToggleNav}
@@ -85,17 +85,11 @@ const MobileNav = () => {
               </nav>
 
               <button
-                className="hover:text-primary-500 dark:hover:text-primary-400 fixed top-7 right-4 z-80 h-16 w-16 p-4 text-gray-900 dark:text-gray-100"
-                aria-label="Toggle Menu"
+                className="hover:text-primary-500 dark:hover:text-primary-400 fixed top-7 right-4 z-80 flex h-12 w-12 items-center justify-center text-gray-900 dark:text-gray-100"
+                aria-label="Close Menu"
                 onClick={onToggleNav}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fillRule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <X className="h-7 w-7" />
               </button>
             </DialogPanel>
           </TransitionChild>
