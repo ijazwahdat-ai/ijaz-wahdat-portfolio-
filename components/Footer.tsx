@@ -3,7 +3,8 @@
 import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { User } from 'firebase/auth'
+import { getRedirectResult, signOut, User } from 'firebase/auth'
+import { ADMIN_OWNER_EMAIL, auth } from '@/lib/firebase-client'
 import Link from './Link'
 import siteMetadata from '@/data/siteMetadata'
 import SocialIcon from '@/components/social-icons'
@@ -27,7 +28,7 @@ export default function Footer({ siteConfig, authorName }: FooterProps) {
   const [gateOpen, setGateOpen] = useState(false)
   const [unlockedSession, setUnlockedSession] = useState<{
     user: User
-    bearerToken: string
+    bearerToken: string | null
   } | null>(null)
 
   const tapCountRef = useRef(0)
@@ -41,6 +42,29 @@ export default function Footer({ siteConfig, authorName }: FooterProps) {
   const github = siteConfig?.github ?? siteMetadata.github
   const linkedin = siteConfig?.linkedin ?? siteMetadata.linkedin
   const twitter = siteConfig?.twitter ?? siteMetadata.twitter
+
+  useEffect(() => {
+    let cancelled = false
+    getRedirectResult(auth)
+      .then(async (cred) => {
+        if (cancelled || !cred?.user) return
+        if (cred.user.email !== ADMIN_OWNER_EMAIL || !cred.user.emailVerified) {
+          await signOut(auth)
+          return
+        }
+        const res = await fetch('/api/studio/auth', { method: 'GET' })
+        const data = await res.json()
+        if (!cancelled && res.ok && data.unlocked) {
+          setUnlockedSession({ user: cred.user, bearerToken: null })
+        }
+      })
+      .catch(() => {
+        // Ignore when no redirect result is pending
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     return () => {

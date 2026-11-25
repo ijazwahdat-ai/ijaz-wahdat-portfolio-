@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { ArrowRight, Eye, EyeOff, KeyRound, Lock, ShieldCheck, X } from 'lucide-react'
-import { onAuthStateChanged, signInWithPopup, signOut, User } from 'firebase/auth'
+import { onAuthStateChanged, signInWithPopup, signInWithRedirect, signOut, User } from 'firebase/auth'
 import { ADMIN_OWNER_EMAIL, auth, googleProvider } from '@/lib/firebase-client'
 import { saveAdminGateHash } from '@/lib/studio-firestore'
 
@@ -21,6 +21,7 @@ export default function SecretGateModal({ open, onClose, onUnlocked }: SecretGat
   const [mode, setMode] = useState<GateMode>('verify')
   const [pendingToken, setPendingToken] = useState<string | null>(null)
   const [error, setError] = useState('')
+  const [showRedirectFallback, setShowRedirectFallback] = useState(false)
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState<User | null>(null)
 
@@ -32,6 +33,7 @@ export default function SecretGateModal({ open, onClose, onUnlocked }: SecretGat
   useEffect(() => {
     if (!open) return
     setError('')
+    setShowRedirectFallback(false)
     setCode('')
     setConfirmCode('')
     setPendingToken(null)
@@ -106,13 +108,13 @@ export default function SecretGateModal({ open, onClose, onUnlocked }: SecretGat
 
   const handleLinkOwnerSession = async () => {
     setError('')
+    setShowRedirectFallback(false)
     setLoading(true)
     try {
       const cred = await signInWithPopup(auth, googleProvider)
       if (cred.user.email !== ADMIN_OWNER_EMAIL || !cred.user.emailVerified) {
         await signOut(auth)
         setError('Unauthorized account. Only the portfolio owner database session is allowed.')
-        setLoading(false)
         return
       }
 
@@ -121,11 +123,53 @@ export default function SecretGateModal({ open, onClose, onUnlocked }: SecretGat
         return
       }
 
-      // Now that Firebase owner session is linked, re-verify the entered code against Firestore vault
-      await verifyWithServer(code.trim(), cred.user)
-    } catch {
-      setError('Popup was closed or blocked. Please allow the sign-in window and try again.')
+      try {
+        await verifyWithServer(code.trim(), cred.user)
+      } catch {
+        setError('Verification failed after sign-in. Please retry.')
+      }
+    } catch (err) {
+      const fbErr = err as { code?: string; message?: string }
+      const errCode = fbErr?.code || ''
+      const host = typeof window !== 'undefined' ? window.location.hostname : ''
+      const isTopWindow = typeof window !== 'undefined' && window.self === window.top
+
+      if (errCode === 'auth/unauthorized-domain') {
+        setError(
+          `Domain "${host}" is not authorized in Firebase Auth. Add "${host}" in Firebase Console → Authentication → Settings → Authorized domains.`
+        )
+      } else if (errCode === 'auth/operation-not-allowed') {
+        setError(
+          'Google Sign-In is disabled in Firebase Console → Authentication → Sign-in method.'
+        )
+      } else if (errCode === 'auth/popup-blocked') {
+        setError(
+          'Browser blocked the sign-in popup. Allow popups for this site or use Redirect Sign-In below.'
+        )
+        if (isTopWindow) setShowRedirectFallback(true)
+      } else if (errCode === 'auth/popup-closed-by-user') {
+        setError(
+          'Sign-in window closed before finishing (or blocked by browser privacy/tracking settings).'
+        )
+        if (isTopWindow) setShowRedirectFallback(true)
+      } else {
+        setError(
+          `Sign-in failed${errCode ? ` (${errCode})` : ''}: ${fbErr?.message || 'Please allow the sign-in window and try again.'}`
+        )
+      }
     } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRedirectSignIn = async () => {
+    setError('')
+    setLoading(true)
+    try {
+      await signInWithRedirect(auth, googleProvider)
+    } catch (err) {
+      const fbErr = err as { code?: string; message?: string }
+      setError(`Redirect sign-in failed (${fbErr?.code || 'error'}): ${fbErr?.message || 'Retry.'}`)
       setLoading(false)
     }
   }
@@ -292,6 +336,16 @@ export default function SecretGateModal({ open, onClose, onUnlocked }: SecretGat
               <ShieldCheck className="h-4 w-4" />
               <span>{loading ? 'Connecting...' : 'Connect Owner Cloud Session'}</span>
             </button>
+            {showRedirectFallback && (
+              <button
+                type="button"
+                onClick={handleRedirectSignIn}
+                disabled={loading}
+                className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-gray-50 px-4 py-2.5 text-xs font-semibold text-gray-800 transition-colors hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
+                <span>Use Full-Page Redirect Sign-In</span>
+              </button>
+            )}
           </div>
         )}
 
